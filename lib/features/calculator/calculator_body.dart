@@ -163,13 +163,13 @@ class _SciStrip extends StatelessWidget {
         itemBuilder: (_, i) {
           final c = chips[i];
           return ActionChip(
-            label: Text(c.label),
+            label: Text(c.$1),
             onPressed: () async {
               await calc.feedbackTap();
-              if (c.plain) {
-                calc.append(c.ins);
+              if (c.$3) {
+                calc.append(c.$2);
               } else {
-                calc.appendSci(c.ins);
+                calc.appendSci(c.$2);
               }
             },
             backgroundColor: CalculatorBody._memBg,

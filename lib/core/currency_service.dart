@@ -11,7 +11,7 @@ class CurrencyService {
     required String to,
   }) async {
     if (from == to) {
-      return (rate: 1, fetched: DateTime.now());
+      return (rate: 1.0, fetched: DateTime.now());
     }
     final uri = Uri.parse(
       'https://api.frankfurter.app/latest?from=$from&to=$to',

@@ -40,25 +40,29 @@ double _evalBinary(
 }) {
   final left = evalExpr(e.left, mode, angleInDegrees: angleInDegrees);
 
-  if (e.op == '+' && e.right is PercentExpr pr) {
+  if (e.op == '+' && e.right is PercentExpr) {
+    final pr = e.right as PercentExpr;
     final p = evalExpr(pr.inner, mode, angleInDegrees: angleInDegrees);
     if (mode == PercentMode.proportion) {
       return left + left * p / 100;
     }
     return left + p / 100;
   }
-  if (e.op == '-' && e.right is PercentExpr pr) {
+  if (e.op == '-' && e.right is PercentExpr) {
+    final pr = e.right as PercentExpr;
     final p = evalExpr(pr.inner, mode, angleInDegrees: angleInDegrees);
     if (mode == PercentMode.proportion) {
       return left - left * p / 100;
     }
     return left - p / 100;
   }
-  if (e.op == '*' && e.right is PercentExpr pr) {
+  if (e.op == '*' && e.right is PercentExpr) {
+    final pr = e.right as PercentExpr;
     final frac = evalExpr(pr.inner, mode, angleInDegrees: angleInDegrees) / 100;
     return left * frac;
   }
-  if (e.op == '/' && e.right is PercentExpr pr) {
+  if (e.op == '/' && e.right is PercentExpr) {
+    final pr = e.right as PercentExpr;
     final frac = evalExpr(pr.inner, mode, angleInDegrees: angleInDegrees) / 100;
     if (frac == 0) {
       throw const FormatException('Деление на ноль');

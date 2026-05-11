@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import 'app_settings.dart';
 import 'expression_evaluator.dart';
-import 'expression_parser.dart';
 import 'native_bridge.dart';
 
 class HistoryItem {

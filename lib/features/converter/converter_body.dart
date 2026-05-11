@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/currencies_data.dart';
 import '../../core/currency_service.dart';
 import '../../widgets/scale_calc_button.dart';
 import 'currency_picker_screen.dart';

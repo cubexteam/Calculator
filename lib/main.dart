@@ -16,7 +16,6 @@ Future<void> main() async {
         ChangeNotifierProvider<AppSettings>.value(value: settings),
         ChangeNotifierProvider<CalculatorController>(
           create: (ctx) => CalculatorController(settings: ctx.read<AppSettings>()),
-          dispose: (_, c) => c.dispose(),
         ),
       ],
       child: const CalculatorApp(),

@@ -51,7 +51,7 @@ class _ScaleCalcButtonState extends State<ScaleCalcButton> with SingleTickerProv
         child: InkWell(
           customBorder: const CircleBorder(),
           splashColor: Colors.black12,
-          highlightColor: Colors.black.withOpacity(0.06),
+          highlightColor: Colors.black.withValues(alpha: 0.06),
           onTapDown: (_) => _c.forward(),
           onTap: () {
             _c.reverse();

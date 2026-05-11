@@ -134,11 +134,6 @@ class _SciStrip extends StatelessWidget {
   const _SciStrip({required this.calc});
   final CalculatorController calc;
 
-  Future<void> _tap(String t) async {
-    await calc.feedbackTap();
-    calc.appendSci(t);
-  }
-
   @override
   Widget build(BuildContext context) {
     final chips = <(String label, String ins, bool plain)>[

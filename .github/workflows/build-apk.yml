@@ -5,12 +5,15 @@
 #
 # push / workflow_dispatch: без секретов — job упадёт (нужен ваш keystore).
 # pull_request: секреты не используются — APK подписан debug-ключом Gradle.
+# push тега v*: APK загружается в GitHub Release автоматически.
 
 name: Build APK
 
 on:
   push:
     branches: [main, master]
+    tags:
+      - 'v*'
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -19,7 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout
@@ -43,6 +46,15 @@ jobs:
           path: ~/.pub-cache
           key: pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: pub-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
 
       - name: Dependencies
         run: flutter pub get
@@ -92,9 +104,15 @@ jobs:
         if: github.event_name == 'pull_request'
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload APK (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: calculator-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+
+      - name: Upload APK to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk

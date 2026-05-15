@@ -7,6 +7,8 @@ import '../../core/expression_parser.dart';
 class PercentModeScreen extends StatelessWidget {
   const PercentModeScreen({super.key});
 
+  static const _accent = Color(0xFFE53935);
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<AppSettings>();
@@ -52,41 +54,57 @@ class PercentModeScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Column(
               children: [
-                RadioListTile<PercentMode>(
-                  title: const Text('Расчёт на основе числового значения', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text(
-                    'Преобразуйте проценты в десятичные значения для выполнения операций сложения и вычитания.',
-                    style: TextStyle(fontSize: 13),
-                  ),
+                _PercentRadioTile(
+                  title: 'Расчёт на основе числового значения',
+                  subtitle: 'Преобразуйте проценты в десятичные значения для выполнения операций сложения и вычитания.',
                   value: PercentMode.numericalValue,
-                  groupValue: settings.percentMode,
-                  activeColor: const Color(0xFFE53935),
-                  onChanged: (v) {
-                    if (v != null) {
-                      settings.setPercentMode(v);
-                    }
-                  },
+                  selected: settings.percentMode == PercentMode.numericalValue,
+                  onTap: () => settings.setPercentMode(PercentMode.numericalValue),
                 ),
                 const Divider(height: 1),
-                RadioListTile<PercentMode>(
-                  title: const Text('Расчёт в виде пропорции', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text(
-                    'Проценты выражены в виде пропорции. Этот метод часто используется для расчёта скидок.',
-                    style: TextStyle(fontSize: 13),
-                  ),
+                _PercentRadioTile(
+                  title: 'Расчёт в виде пропорции',
+                  subtitle: 'Проценты выражены в виде пропорции. Этот метод часто используется для расчёта скидок.',
                   value: PercentMode.proportion,
-                  groupValue: settings.percentMode,
-                  activeColor: const Color(0xFFE53935),
-                  onChanged: (v) {
-                    if (v != null) {
-                      settings.setPercentMode(v);
-                    }
-                  },
+                  selected: settings.percentMode == PercentMode.proportion,
+                  onTap: () => settings.setPercentMode(PercentMode.proportion),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PercentRadioTile extends StatelessWidget {
+  const _PercentRadioTile({
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final PercentMode value;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      isThreeLine: true,
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 13)),
+      trailing: Radio<PercentMode>(
+        value: value,
+        groupValue: selected ? value : (value == PercentMode.numericalValue ? PercentMode.proportion : PercentMode.numericalValue),
+        activeColor: const Color(0xFFE53935),
+        onChanged: (_) => onTap(),
       ),
     );
   }

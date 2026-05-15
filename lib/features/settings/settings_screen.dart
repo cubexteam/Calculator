@@ -22,7 +22,8 @@ class SettingsScreen extends StatelessWidget {
                 SwitchListTile(
                   title: const Text('Звук нажатия кнопок', style: TextStyle(fontWeight: FontWeight.w600)),
                   value: settings.soundOn,
-                  activeColor: const Color(0xFFE53935),
+                  activeThumbColor: const Color(0xFFE53935),
+                  activeTrackColor: const Color(0xFFEF9A9A),
                   onChanged: settings.setSound,
                 ),
                 const Divider(height: 1),

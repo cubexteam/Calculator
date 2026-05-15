@@ -78,6 +78,7 @@ class PercentModeScreen extends StatelessWidget {
 }
 
 class _OptionTile extends StatelessWidget {
+  static const _accent = Color(0xFFE53935);
   const _OptionTile({
     required this.title,
     required this.subtitle,

@@ -253,7 +253,7 @@ class _HistoryPanel extends StatelessWidget {
 }
 
 class _MainPad extends StatelessWidget {
-  const _MainPad({super.key});
+  const _MainPad();
 
   @override
   Widget build(BuildContext context) {

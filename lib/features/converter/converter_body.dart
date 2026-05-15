@@ -160,59 +160,78 @@ class _ConverterBodyState extends State<ConverterBody> {
         ? 'Источник данных: Frankfurter. Последнее обновление: ${DateFormat.yMMMd('ru_RU').add_Hms().format(_fetched!)}'
         : '';
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Верхняя часть — скролл если надо (валюты + статус)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text.rich(
-                TextSpan(
-                  children: [
-                    const TextSpan(text: 'Конвертация ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.baseline,
-                      baseline: TextBaseline.alphabetic,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('валют', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-                          Container(height: 3, width: 40, color: _accent),
-                        ],
-                      ),
+              Row(
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(text: 'Конвертация ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.baseline,
+                          baseline: TextBaseline.alphabetic,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('валют', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                              Container(height: 3, width: 40, color: _accent),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 12),
+              _CurrencyRow(
+                label: fromInfo != null ? '${fromInfo.nameRu} ${fromInfo.code}' : _from,
+                value: _input,
+                onTap: () => _pick(true),
+              ),
+              const Divider(height: 1),
+              _CurrencyRow(
+                label: toInfo != null ? '${toInfo.nameRu} ${toInfo.code}' : _to,
+                value: _converted(),
+                onTap: () => _pick(false),
+                mutedValue: true,
+              ),
+              // Фиксированная высота для индикатора загрузки — не сдвигает грид
+              SizedBox(
+                height: 2,
+                child: _busy ? const LinearProgressIndicator(minHeight: 2) : null,
+              ),
+              // Фиксированная высота для строки ошибки — не сдвигает грид
+              SizedBox(
+                height: 24,
+                child: _err != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(_err!, style: const TextStyle(color: _accent, fontSize: 12)),
+                      )
+                    : null,
+              ),
+              SizedBox(
+                height: 20,
+                child: Text(meta, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
-          const SizedBox(height: 12),
-          _CurrencyRow(
-            label: fromInfo != null ? '${fromInfo.nameRu} ${fromInfo.code}' : _from,
-            value: _input,
-            onTap: () => _pick(true),
-          ),
-          const Divider(height: 1),
-          _CurrencyRow(
-            label: toInfo != null ? '${toInfo.nameRu} ${toInfo.code}' : _to,
-            value: _converted(),
-            onTap: () => _pick(false),
-            mutedValue: true,
-          ),
-          if (_busy) const LinearProgressIndicator(minHeight: 2) else const SizedBox(height: 2),
-          if (_err != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Text(_err!, style: const TextStyle(color: _accent, fontSize: 12)),
-            ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(meta, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
+        ),
+        // Грид клавиш — занимает оставшееся место, не прыгает
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             child: GridView.count(
               crossAxisCount: 4,
               childAspectRatio: 1.05,
@@ -241,8 +260,8 @@ class _ConverterBodyState extends State<ConverterBody> {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

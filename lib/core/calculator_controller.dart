@@ -171,9 +171,9 @@ class CalculatorController extends ChangeNotifier {
     if (i < 0) return;
     final numStr = expression.substring(i);
     if (numStr.startsWith('-')) {
-      expression = expression.substring(0, i) + numStr.substring(1);
+      expression = '${expression.substring(0, i)}${numStr.substring(1)}';
     } else {
-      expression = expression.substring(0, i) + '-$numStr';
+      expression = '${expression.substring(0, i)}-$numStr';
     }
     _updatePreview();
     notifyListeners();

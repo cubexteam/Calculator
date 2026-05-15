@@ -61,10 +61,14 @@ class CalculatorBody extends StatelessWidget {
               ],
             ],
           ),
-          if (calc.scientificMode) _SciStrip(calc: calc),
+          // Фиксированная высота для научной панели — не сдвигает грид
+          SizedBox(
+            height: calc.scientificMode ? 44 : 0,
+            child: calc.scientificMode ? _SciStrip(calc: calc) : null,
+          ),
           const SizedBox(height: 6),
           Expanded(
-            child: calc.historyVisible ? _HistoryPanel(calc: calc) : _MainPad(calc: calc),
+            child: calc.historyVisible ? _HistoryPanel(calc: calc) : const _MainPad(),
           ),
         ],
       ),
@@ -149,29 +153,26 @@ class _SciStrip extends StatelessWidget {
       ('π', 'pi', false),
       ('e', 'e', false),
     ];
-    return SizedBox(
-      height: 44,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: chips.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
-        itemBuilder: (_, i) {
-          final c = chips[i];
-          return ActionChip(
-            label: Text(c.$1),
-            onPressed: () async {
-              await calc.feedbackTap();
-              if (c.$3) {
-                calc.append(c.$2);
-              } else {
-                calc.appendSci(c.$2);
-              }
-            },
-            backgroundColor: CalculatorBody._memBg,
-            side: BorderSide.none,
-          );
-        },
-      ),
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: chips.length,
+      separatorBuilder: (_, __) => const SizedBox(width: 6),
+      itemBuilder: (_, i) {
+        final c = chips[i];
+        return ActionChip(
+          label: Text(c.$1),
+          onPressed: () async {
+            await calc.feedbackTap();
+            if (c.$3) {
+              calc.append(c.$2);
+            } else {
+              calc.appendSci(c.$2);
+            }
+          },
+          backgroundColor: CalculatorBody._memBg,
+          side: BorderSide.none,
+        );
+      },
     );
   }
 }
@@ -252,20 +253,21 @@ class _HistoryPanel extends StatelessWidget {
 }
 
 class _MainPad extends StatelessWidget {
-  const _MainPad({required this.calc});
-  final CalculatorController calc;
-
-  Future<void> _a(String t) async {
-    await calc.feedbackTap();
-    calc.append(t);
-  }
+  const _MainPad({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final calc = context.watch<CalculatorController>();
+
     const memBg = CalculatorBody._memBg;
     const numBg = CalculatorBody._numBg;
     const accent = CalculatorBody._accent;
     const opBg = CalculatorBody._opBg;
+
+    Future<void> a(String t) async {
+      await calc.feedbackTap();
+      calc.append(t);
+    }
 
     Widget cell(Widget w) => Padding(padding: const EdgeInsets.all(5), child: w);
 
@@ -282,21 +284,22 @@ class _MainPad extends StatelessWidget {
         child: const Icon(Icons.backspace_outlined, color: accent),
       )),
       cell(ScaleCalcButton(label: '±', onTap: () async { await calc.feedbackTap(); calc.negate(); }, background: numBg, foreground: accent)),
-      cell(ScaleCalcButton(label: '÷', onTap: () => _a('÷'), background: opBg, foreground: accent)),
-      ...['7', '8', '9'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => _a(d), background: numBg))),
-      cell(ScaleCalcButton(label: '×', onTap: () => _a('×'), background: opBg, foreground: accent)),
-      ...['4', '5', '6'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => _a(d), background: numBg))),
-      cell(ScaleCalcButton(label: '−', onTap: () => _a('-'), background: opBg, foreground: accent)),
-      ...['1', '2', '3'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => _a(d), background: numBg))),
-      cell(ScaleCalcButton(label: '+', onTap: () => _a('+'), background: opBg, foreground: accent)),
-      cell(ScaleCalcButton(label: '%', onTap: () => _a('%'), background: numBg)),
-      cell(ScaleCalcButton(label: '0', onTap: () => _a('0'), background: numBg)),
-      cell(ScaleCalcButton(label: ',', onTap: () => _a(','), background: numBg)),
+      cell(ScaleCalcButton(label: '÷', onTap: () => a('÷'), background: opBg, foreground: accent)),
+      ...['7', '8', '9'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => a(d), background: numBg))),
+      cell(ScaleCalcButton(label: '×', onTap: () => a('×'), background: opBg, foreground: accent)),
+      ...['4', '5', '6'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => a(d), background: numBg))),
+      cell(ScaleCalcButton(label: '−', onTap: () => a('-'), background: opBg, foreground: accent)),
+      ...['1', '2', '3'].map((d) => cell(ScaleCalcButton(label: d, onTap: () => a(d), background: numBg))),
+      cell(ScaleCalcButton(label: '+', onTap: () => a('+'), background: opBg, foreground: accent)),
+      cell(ScaleCalcButton(label: '%', onTap: () => a('%'), background: numBg)),
+      cell(ScaleCalcButton(label: '0', onTap: () => a('0'), background: numBg)),
+      cell(ScaleCalcButton(label: ',', onTap: () => a(','), background: numBg)),
       cell(ScaleCalcButton(label: '=', onTap: () async { await calc.feedbackTap(); calc.submit(); }, background: accent, foreground: Colors.white, fontSize: 26)),
     ];
 
     return GridView.count(
       crossAxisCount: 4,
+      // NeverScrollableScrollPhysics чтобы грид не прыгал
       physics: const NeverScrollableScrollPhysics(),
       childAspectRatio: 1.05,
       children: children,

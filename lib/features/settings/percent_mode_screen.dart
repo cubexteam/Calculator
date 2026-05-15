@@ -54,18 +54,18 @@ class PercentModeScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Column(
               children: [
-                _PercentRadioTile(
+                _OptionTile(
                   title: 'Расчёт на основе числового значения',
-                  subtitle: 'Преобразуйте проценты в десятичные значения для выполнения операций сложения и вычитания.',
-                  value: PercentMode.numericalValue,
+                  subtitle:
+                      'Преобразуйте проценты в десятичные значения для выполнения операций сложения и вычитания.',
                   selected: settings.percentMode == PercentMode.numericalValue,
                   onTap: () => settings.setPercentMode(PercentMode.numericalValue),
                 ),
                 const Divider(height: 1),
-                _PercentRadioTile(
+                _OptionTile(
                   title: 'Расчёт в виде пропорции',
-                  subtitle: 'Проценты выражены в виде пропорции. Этот метод часто используется для расчёта скидок.',
-                  value: PercentMode.proportion,
+                  subtitle:
+                      'Проценты выражены в виде пропорции. Этот метод часто используется для расчёта скидок.',
                   selected: settings.percentMode == PercentMode.proportion,
                   onTap: () => settings.setPercentMode(PercentMode.proportion),
                 ),
@@ -78,33 +78,49 @@ class PercentModeScreen extends StatelessWidget {
   }
 }
 
-class _PercentRadioTile extends StatelessWidget {
-  const _PercentRadioTile({
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
     required this.title,
     required this.subtitle,
-    required this.value,
     required this.selected,
     required this.onTap,
   });
 
   final String title;
   final String subtitle;
-  final PercentMode value;
   final bool selected;
   final VoidCallback onTap;
 
+  static const _accent = Color(0xFFE53935);
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return InkWell(
       onTap: onTap,
-      isThreeLine: true,
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 13)),
-      trailing: Radio<PercentMode>(
-        value: value,
-        groupValue: selected ? value : (value == PercentMode.numericalValue ? PercentMode.proportion : PercentMode.numericalValue),
-        activeColor: const Color(0xFFE53935),
-        onChanged: (_) => onTap(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                  const SizedBox(height: 4),
+                  Text(subtitle,
+                      style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              color: selected ? _accent : Colors.black38,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -145,12 +161,14 @@ class _ExampleCard extends StatelessWidget {
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
-            child: Text(expr, style: const TextStyle(fontSize: 22, color: Colors.black54)),
+            child: Text(expr,
+                style: const TextStyle(fontSize: 22, color: Colors.black54)),
           ),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
-            child: Text(result, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w700)),
+            child: Text(result,
+                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w700)),
           ),
           const SizedBox(height: 12),
           Align(
@@ -164,7 +182,8 @@ class _ExampleCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         color: p.accent ? const Color(0xFFE53935) : Colors.black54,
-                        fontWeight: p.accent ? FontWeight.w700 : FontWeight.w400,
+                        fontWeight:
+                            p.accent ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                 ],

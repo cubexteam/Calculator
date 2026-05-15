@@ -7,7 +7,6 @@ import '../../core/expression_parser.dart';
 class PercentModeScreen extends StatelessWidget {
   const PercentModeScreen({super.key});
 
-  static const _accent = Color(0xFFE53935);
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +90,6 @@ class _OptionTile extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  static const _accent = Color(0xFFE53935);
 
   @override
   Widget build(BuildContext context) {
